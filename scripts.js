@@ -52,7 +52,7 @@ window.addEventListener('DOMContentLoaded', () => {
     } },
     filter = (array, word, value, type) => Array.from(array).filter(c => 
         !c.includes(replace(word))).join(',').replaceAll(',',' ') + ` d-${type} ` + replace(word + '-' + value),
-    nest = (array) => { for(i = 1; i < array.length; i++){ 
+    nest = (array) => { for(let i = 1; i < array.length; i++){ 
         array[i-1].append(array[i]) 
     } },
     array = (obj, arr, values) => { arr[0].forEach(a => arr[1].forEach(b => combine(obj, a+'-'+b, values) ) ) },
