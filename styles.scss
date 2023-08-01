@@ -1,0 +1,126 @@
+@use 'sass:math';
+@use 'sass:string';
+$cols: 24;
+$limit: 10;
+$media: 
+    -sm 576px 540px,
+    -md 768px 720px,
+    -lg 992px 960px,
+    -xl 1200px 1140px,
+    -xxl 1400px 1320px,
+;
+$i: 'inline-';
+$s: 'space-';
+$words: $s, 'wrap-';
+$family: sans-serif, serif, monospace, consolas;
+$overflow: visible, hidden, auto, scroll;
+$border: none, dashed, dotted, solid, groove, double;
+$directions: t top, e right, b bottom, s left;
+$display: inline, block, #{$i}block, table, #{$i}table, flex, #{$i}flex, grid, #{$i}grid;
+$wrap: nowrap, wrap, wrap-reverse;
+$direction: row, column, row-reverse, column-reverse;
+$content: start, center, end, #{$s}around, #{$s}between, #{$s}evenly, stretch, baseline;
+$position: static, relative, absolute, fixed, sticky;
+$default: 
+    d               ( display:         $display    ),
+    o               ( overflow:        $overflow   ),
+    b               ( border-style:    $border     ),
+    p               ( position:        $position   ),
+    f               ( font-family:     $family     ),
+    flex            ( flex-direction:  $direction  ),
+    wrap            ( flex-wrap:       $wrap       ),
+    justify-items   ( justify-items:   $content    ),
+    align-items     ( align-items:     $content    ),
+    justify-content ( justify-content: $content    ),
+    align-content   ( align-content:   $content    ),
+    self            ( align-self:      $content    ),
+;
+$box-models: 
+    w       width,          min-w   min-width,
+    h       height,         min-h   min-height,
+    m       margin,         mn      margin,
+    o       outline,        
+    br      border-radius,  b       border-width,
+    p       padding,        g       gap,            
+    fs      font-size,      fw      font-weight,
+;
+$colors:
+    primary     #448,
+    secondary   #c36,
+    light       #eee,
+    dark        #333,
+    danger      #c33,
+    warning     #da3,
+    success     #3c6,
+    info        #36c,
+;
+$attributes:
+    text    color,
+    bg      background-color,
+    border  border-color,
+    shade   --shade,
+    shadow  --shadow,
+;
+@mixin classes ($class, $attr, $value) {
+    .#{$class}{ #{$attr}: $value }
+}
+@mixin css($vn: ''){
+    @each $key, $properties in $default {
+    @each $prop, $values in $properties {
+    /* #{string.to-upper-case($prop + ' properties') } */
+        @each $val in $values {
+            $attr: $val;
+            @each $word in $words{
+            @if(string.index($val, $word)){
+                $attr: string.slice($val, string.length($word) + 1);
+            } }
+        @include classes($key+$vn+'-'+$attr, $prop, $val);
+    } } }
+
+    @each $prop, $attr in $box-models {
+    /* #{string.to-upper-case($attr + ' size properties') } */
+    @for $i from 0 through $limit {
+        $unit: 0;
+        @if ($prop =='w' or str-index($prop, min)){ $unit: $i * 10% }
+        @else if ($prop == 'fs'){ $unit: -$i * 0.5rem + 6 }
+        @else if ($prop == 'fw'){ $unit: $i * 100 }
+        @else if ($prop == 'h' ){ $unit: $i * 10vh }
+        @else if ($prop == 'mn'){ $unit: -$i * .25rem }
+        @else { $unit: .25rem * $i }
+
+        @include classes($prop+$vn+'-'+$i, $attr, $unit);
+        @if ($i == 0 and (str-index($prop, m))){
+            @include classes($prop+$vn+'-auto', $attr, auto);
+        }
+    } }
+
+    @each $prop, $attr in $attributes {
+    /* #{string.to-upper-case($attr + ' properties') } */
+    @each $cn, $cv  in $colors {
+        @include classes($prop+$vn+'-'+$cn, $attr, $cv);
+    } }
+    @for $i from 1 through $cols {
+        @include classes('col'+$vn+'-'+$i, width, percentage($i / $cols));
+        @include classes('columns'+$vn+'-'+$i, grid-template-columns, repeat($i, 1fr));
+        .d-flex.columns#{$vn}-#{$i} > *{
+            width: percentage($i / $cols);
+        }
+    }
+}
+
+
+@each $vn, $vw, $vmax in $media{
+    @if $vw == 576px { 
+        @include css(); 
+    } @else { 
+        @media screen and (min-width: $vw){
+        .container,
+        .container-#{vn}{
+            max-width: $vmax;
+        }
+        @include css($vn); 
+    } }
+}
+* {
+    transition: all .25s ease;
+}
