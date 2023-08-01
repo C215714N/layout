@@ -3,7 +3,7 @@ window.addEventListener('DOMContentLoaded', () => {
         d = document,
         root = d.getElementById('root'),
         words = ['-direction', 'space-', 'template-'],
-        themes = ['flex','grid','position'],
+        themes = ['flex','grid'],
         axis = ['justify', 'align'],
         attr = ['content', 'items'],
         wrap = ['wrap','nowrap','reverse'],
@@ -32,13 +32,13 @@ window.addEventListener('DOMContentLoaded', () => {
             'space-between',
             'space-evenly'
         ],
-        flexbox = {
+        flex = {
             "flex-direction": direction,
             "justify-content": content,
             "align-items": ['stretch', ...content.slice(0,3)],
             wrap,
         },
-        cssgrid = {
+        grid = {
             "template-columns": [1,2,3,4,5,6],
             "template-rows": [1,2,3,4,5,6],
         },
@@ -72,8 +72,13 @@ window.addEventListener('DOMContentLoaded', () => {
         list.innerHTML = '';
         form(option, type);
     },
+    title = create('select',{
+        className: 'w-10 p-1',
+        innerHTML: themes.map(theme => `<option value=${theme}>${theme.toUpperCase()}</option>`),
+        oninput: (e) => selection(eval(e.target.value), e.target.value)
+    } ),
     section = create('section', { 
-        className: 'd-flex wrap-wrap align-items-start justify-content-md-evenly g-1' 
+        className: 'd-flex wrap-wrap align-items-start justify-content-md-evenly g-2' 
     } ),
     box = create('div', { 
         className: 'col-24 col-md-18 min-w-5 o-auto br-2 b-1 b-solid border-light shadow-grey', 
@@ -85,10 +90,13 @@ window.addEventListener('DOMContentLoaded', () => {
     } ),
     numbers = (ini, fin, arr=[]) => { for(let i = ini; i <= fin; i++) { arr[i] = i }; return arr }
     
-    array(cssgrid, [["template"],["columns","rows"]], numbers(1,12))
-    array(cssgrid, [axis, attr], [...content, 'stretch'])
+    array(grid, [["template"],["columns","rows"]], numbers(1,12))
+    array(grid, [axis, attr], [...content, 'stretch'])
+    
     
     fill(box, 'div', 6)
     section.append(list)
+    selection(flex, 'flex')
+    nest([root, title])
     nest([root, section, box])
 } )
