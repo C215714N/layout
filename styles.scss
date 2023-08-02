@@ -61,15 +61,28 @@ $attributes:
     shadow  --shadow,
 ;
 $columns:
-    col     width,
-    columns grid-template-columns,
-    rows    grid-template-rows,
+    col         width,
+    columns     grid-template-columns,
+    rows        grid-template-rows,
+    col-start   grid-column-start,
+    col-end     grid-column-end,
+    row-start   grid-row-start,
+    row-end     grid-row-end,
 ;
 @mixin classes ($class, $attr, $value) {
     .#{$class}{ #{$attr}: $value }
 }
 @function percent($a,$b) { @return percentage($a/$b) };
 @function columns($a, $b){ @return repeat($a, $b) };
+@function setUnit($prop, $i, $unit: 0){
+    @if ($prop =='w' or str-index($prop, min)){ $unit: $i * 10% }
+    @else if ($prop == 'fs'){ $unit: -$i * 0.5rem + 5.75 }
+    @else if ($prop == 'fw'){ $unit:  $i * 100 }
+    @else if ($prop == 'h' ){ $unit:  $i * 10vh }
+    @else if ($prop == 'mn'){ $unit: -$i *.25rem }
+    @else { $unit: .25rem * $i }
+    @return $unit;
+}
 @mixin css($vn: ''){
     @each $key, $properties in $default {
     @each $prop, $values in $properties {
@@ -85,13 +98,7 @@ $columns:
     @each $prop, $attr in $box-models {
     /* #{string.to-upper-case($attr + ' size properties') } */
     @for $i from 0 through $limit {
-        $unit: 0;
-        @if ($prop =='w' or str-index($prop, min)){ $unit: $i * 10% }
-        @else if ($prop == 'fs'){ $unit: -$i * 0.5rem + 5.75 }
-        @else if ($prop == 'fw'){ $unit: $i * 100 }
-        @else if ($prop == 'h' ){ $unit: $i * 10vh }
-        @else if ($prop == 'mn'){ $unit: -$i * .25rem }
-        @else { $unit: .25rem * $i }
+        $unit: setUnit($prop, $i);
         @include classes($prop+$vn+'-'+$i, $attr, $unit);
         @if ($i == 0 and (str-index($prop, m))){
             @include classes($prop+$vn+'-auto', $attr, auto);
@@ -104,9 +111,9 @@ $columns:
     } }
     @each $prop, $attr in $columns{
     @for $i from 1 through $cols {
-        $unit: 0;
-        @if $prop == col { $unit: percent($i, $cols); }
-        @else { $unit: repeat($i, auto)}
+        $unit: $i;
+        @if str-index($attr, 'template') { $unit: repeat($i, auto) }
+        @if $prop == col { $unit: percent($i, $cols) }
         @include classes($prop+$vn+'-'+$i, $attr, $unit);
     } }
 }
