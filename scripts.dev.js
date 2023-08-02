@@ -11,10 +11,12 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 window.addEventListener('DOMContentLoaded', function () {
   var d = document,
       root = d.getElementById('root'),
-      words = ['-direction', 'space-', 'template-'],
+      words = ['-direction', 'space-', 'grid-', 'template-'],
       themes = ['flex', 'grid'],
       axis = ['justify', 'align'],
       attr = ['content', 'items'],
+      table = ['col', 'row'],
+      dir = ['start', 'end'],
       wrap = ['wrap', 'nowrap', 'reverse'],
       color = ['primary', 'secondary', 'danger', 'warning', 'success', 'info', 'grey', 'dark', 'light'],
       direction = ['row', 'row-reverse', 'column', 'column-reverse'],
@@ -25,9 +27,10 @@ window.addEventListener('DOMContentLoaded', function () {
     "align-items": ['stretch'].concat(_toConsumableArray(content.slice(0, 3))),
     wrap: wrap
   },
-      grid = {
-    "template-columns": [1, 2, 3, 4, 5, 6],
-    "template-rows": [1, 2, 3, 4, 5, 6]
+      grid = {},
+      boxStyle = {
+    className: 'col-24 col-md-18 min-w-5 o-auto br-2 b-1 b-solid border-light shadow-grey',
+    style: 'min-height:min(80vh, 480px); box-shadow:0 0 .25rem var(--shadow)'
   },
       create = function create(element, attributes) {
     return Object.assign(d.createElement(element), attributes);
@@ -112,9 +115,10 @@ window.addEventListener('DOMContentLoaded', function () {
       selection = function selection(option, type) {
     list.innerHTML = '';
     form(option, type);
+    Object.assign(box, boxStyle);
   },
       title = create('select', {
-    className: 'w-10 p-1',
+    className: 'col-24 col-md-24 p-1',
     innerHTML: themes.map(function (theme) {
       return "<option value=".concat(theme, ">").concat(theme.toUpperCase(), "</option>");
     }),
@@ -125,10 +129,7 @@ window.addEventListener('DOMContentLoaded', function () {
       section = create('section', {
     className: 'd-flex wrap-wrap align-items-start justify-content-md-evenly g-2'
   }),
-      box = create('div', {
-    className: 'col-24 col-md-18 min-w-5 o-auto br-2 b-1 b-solid border-light shadow-grey',
-    style: 'min-height: 320px; box-shadow: 0 0 .25rem var(--shadow)'
-  }),
+      box = create('div', boxStyle),
       list = create('form', {
     className: 'd-grid g-2 m-0 p-0 col-24 col-md-5',
     style: "grid-template-columns: repeat( auto-fit, minmax(min(100%, 280px), 1fr))"
