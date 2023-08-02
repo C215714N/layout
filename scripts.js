@@ -2,10 +2,12 @@ window.addEventListener('DOMContentLoaded', () => {
     const 
         d = document,
         root = d.getElementById('root'),
-        words = ['-direction', 'space-', 'template-'],
+        words = ['-direction', 'space-', 'grid-', 'template-'],
         themes = ['flex','grid'],
         axis = ['justify', 'align'],
         attr = ['content', 'items'],
+        table = ['col', 'row'],
+        dir = ['start', 'end'],
         wrap = ['wrap','nowrap','reverse'],
         color = [
             'primary',
@@ -38,9 +40,10 @@ window.addEventListener('DOMContentLoaded', () => {
             "align-items": ['stretch', ...content.slice(0,3)],
             wrap,
         },
-        grid = {
-            "template-columns": [1,2,3,4,5,6],
-            "template-rows": [1,2,3,4,5,6],
+        grid = { },
+        boxStyle = {
+            className: 'col-24 col-md-18 min-w-5 o-auto br-2 b-1 b-solid border-light shadow-grey', 
+            style: 'min-height:min(80vh, 480px); box-shadow:0 0 .25rem var(--shadow)' 
         },
     create = (element, attributes) => Object.assign(d.createElement(element), attributes),
     replace = (text, value = text) => { for(let w of words) { 
@@ -69,31 +72,24 @@ window.addEventListener('DOMContentLoaded', () => {
         } )
     } ) },
     selection = (option, type) => {
-        list.innerHTML = '';
-        form(option, type);
+        list.innerHTML = ''
+        form(option, type)
+        Object.assign( box, boxStyle )
     },
     title = create('select',{
-        className: 'w-10 p-1',
+        className: 'col-24 col-md-24 p-1',
         innerHTML: themes.map(theme => `<option value=${theme}>${theme.toUpperCase()}</option>`),
         oninput: (e) => selection(eval(e.target.value), e.target.value)
     } ),
-    section = create('section', { 
-        className: 'd-flex wrap-wrap align-items-start justify-content-md-evenly g-2' 
-    } ),
-    box = create('div', { 
-        className: 'col-24 col-md-18 min-w-5 o-auto br-2 b-1 b-solid border-light shadow-grey', 
-        style: 'min-height: 320px; box-shadow: 0 0 .25rem var(--shadow)' 
-    } ),
+    section = create('section', { className: 'd-flex wrap-wrap align-items-start justify-content-md-evenly g-2' } ),
+    box = create('div', boxStyle ),
     list = create('form', { 
         className: 'd-grid g-2 m-0 p-0 col-24 col-md-5', 
         style: `grid-template-columns: repeat( auto-fit, minmax(min(100%, 280px), 1fr))` 
     } ),
     numbers = (ini, fin, arr=[]) => { for(let i = ini; i <= fin; i++) { arr[i] = i }; return arr }
-    
     array(grid, [["template"],["columns","rows"]], numbers(1,12))
     array(grid, [axis, attr], [...content, 'stretch'])
-    
-    
     fill(box, 'div', 6)
     section.append(list)
     selection(flex, 'flex')
